@@ -2,6 +2,11 @@ service: 'go-platform-cap-api'
 provider:
   name: aws
   runtime: nodejs18.x
+plugins:
+  - serverless-offline
+custom:
+  serverless-offline:
+    httpPort: 8080
 functions:
   app:
     handler: dist/app.handler
