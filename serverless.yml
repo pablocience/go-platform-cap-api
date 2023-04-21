@@ -2,6 +2,8 @@ service: 'go-platform-cap-api'
 provider:
   name: aws
   runtime: nodejs18.x
+  deploymentBucket:
+    name: 'go-platform-cap-api-dev'
 plugins:
   - serverless-offline
 custom:
