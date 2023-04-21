@@ -1,16 +1,28 @@
 {
   "extends": "./tsconfig.paths.json",
   "compilerOptions": {
-    "lib": ["ESNext"],
+    "esModuleInterop": true,
+    "lib": ["ESNext", "DOM"],
     "moduleResolution": "node",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "removeComments": true,
     "sourceMap": true,
-    "target": "ES2020",
-    "outDir": "lib"
+    "target": "ES2021",
+    "outDir": "lib",
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@routes/*": ["src/routes/*"],
+      "@config/*": ["src/config/*"],
+      "@ts/*": ["src/ts/*"],
+      "@functions/*": ["src/functions/*"],
+      "@models/*": ["src/models/*"],
+      "@utils/*": ["src/utils/*"],
+      "@libs/*": ["src/libs/*"],
+    }
   },
-  "include": ["src/**/*.ts", "serverless.ts"],
+  "include": ["src/**/*.ts", "serverless.ts", "app.ts"],
   "exclude": [
     "node_modules/**/*",
     ".serverless/**/*",

@@ -1,11 +1,9 @@
 import type { AWS } from '@serverless/typescript';
 
-import hello from '@functions/hello';
-
 const serverlessConfiguration: AWS = {
   service: 'go-platform-cap-api',
   frameworkVersion: '3',
-  plugins: ['serverless-esbuild'],
+  plugins: ['serverless-esbuild', 'serverless-offline'],
   provider: {
     name: 'aws',
     runtime: 'nodejs14.x',
@@ -18,8 +16,25 @@ const serverlessConfiguration: AWS = {
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
     },
   },
-  // import the function via paths
-  functions: { hello },
+  functions: {
+    api: {
+      handler: 'dist/app.handler',
+      events: [
+        {
+          http: {
+            method: 'get',
+            path: '/api/looker',
+          },
+        },
+        {
+          http: {
+            method: 'get',
+            path: '/hello',
+          },
+        },
+      ],
+    },
+  },
   package: { individually: true },
   custom: {
     esbuild: {
@@ -32,7 +47,10 @@ const serverlessConfiguration: AWS = {
       platform: 'node',
       concurrency: 10,
     },
+    'serverless-offline': {
+      httpPort: 8080,
+    },
   },
 };
 
-module.exports = serverlessConfiguration;
+export default serverlessConfiguration;
