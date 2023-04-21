@@ -1,9 +1,9 @@
 {
-  "name": "nodejs-aws-lambda",
+  "name": "go-platform-cap-api",
   "version": "1.0.0",
   "description": "",
-  "homepage": "https://github.com/rodrigokamada/nodejs-aws-lambda#readme",
-  "author": "Rodrigo Kamada <rodrigo@kamada.com.br> (https://github.com/rodrigokamada)",
+  "homepage": "https://github.com/pablocience/go-platform-cap-api.git",
+  "author": "Pablo Zarate <pablo.zarate@cience.com> (https://github.com/pablocience)",
   "license": "MIT",
   "keywords": [
     "api",
@@ -20,10 +20,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rodrigokamada/nodejs-aws-lambda.git"
+    "url": "git+https://github.com/pablocience/go-platform-cap-api.git"
   },
   "bugs": {
-    "url": "https://github.com/rodrigokamada/nodejs-aws-lambda/issues"
+    "url": "https://github.com/pablocience/go-platform-cap-api.git/issues"
   },
   "dependencies": {
     "express": "^4.18.2",

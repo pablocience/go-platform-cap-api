@@ -1,4 +1,4 @@
-service: nodejs-aws-lambda
+service: 'go-platform-cap-api'
 provider:
   name: aws
   runtime: nodejs18.x
