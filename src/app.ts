@@ -1,9 +1,8 @@
-import express from 'express';
+import express, { Request } from 'express';
 import serverless from 'serverless-http';
 
 import routes from './routes';
 import { attachUserData, checkJwt } from './middlewares/CheckJWTAuth0';
-import { RequestWithUser } from './ts/interfaces';
 import { checkXApiKey } from './middlewares/validateApiKey.middleware';
 
 const app = express();
@@ -15,7 +14,7 @@ app.use((req, res, next) => {
     if (err) {
       return next(err);
     }
-    attachUserData(req as unknown as RequestWithUser, next);
+    attachUserData(req as unknown as Request, next);
   });
 });
 app.use('/', routes);

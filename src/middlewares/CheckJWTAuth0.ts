@@ -1,10 +1,9 @@
 import { expressjwt, GetVerificationKey } from 'express-jwt';
-import axios from 'axios';
 import JwksRsa from 'jwks-rsa';
 import dotenv from 'dotenv';
-import { NextFunction } from 'express';
+import { NextFunction, Request } from 'express';
 import { IncomingHttpHeaders } from 'http';
-import { RequestWithUser } from '../ts/interfaces';
+import jwt from 'jsonwebtoken';
 
 dotenv.config();
 const auth0Domain = process.env.AUTH0_DOMAIN as string;
@@ -22,15 +21,19 @@ export const checkJwt = expressjwt({
   audience: auth0Audience,
 });
 
-export const attachUserData = async (req: RequestWithUser, next: NextFunction) => {
+export const attachUserData = async (req: Request, next: NextFunction) => {
   const authHeader = (req.headers as unknown as IncomingHttpHeaders).authorization;
   const accessToken = authHeader?.split(' ')[1] as string;
   if (accessToken) {
     try {
-      const response = await axios.get(`https://${auth0Domain}/userinfo`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      req.user = response.data;
+      // const response = await axios.get(`https://${auth0Domain}/userinfo`, {
+      //   headers: { Authorization: `Bearer ${accessToken}` },
+      // });
+      // req.user = response.data;
+      const decodedToken = jwt.decode(accessToken) as Request['user'];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      req.user = { ...decodedToken, id: decodedToken.sub };
+      req.user.jwt = accessToken;
     } catch (error) {
       console.error('Error al obtener datos del usuario:', error);
     }

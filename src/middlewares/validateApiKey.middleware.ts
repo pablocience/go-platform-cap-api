@@ -9,12 +9,14 @@ export const checkXApiKey = (req: Request, res: Response, next: NextFunction) =>
     return res.status(401).json({
       status: 401,
       message: 'Unauthorized',
+      error:'401UAI'
     });
   }
   if (!customer_id || customer_id === '') {
     return res.status(401).json({
-      status: 400,
-      message: 'Missing customer-id auth header',
+      status: 401,
+      message: 'Unauthorized',
+      error:'401UCI'
     });
   }
   return next();

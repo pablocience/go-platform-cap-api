@@ -1,12 +1,14 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { LookerPostgresConnection } from '../config/LookerPostgresConnection';
 import crypto from 'crypto';
 import querystring from 'querystring';
-import { ILookerFeatUserInterface, ISelectQueryResult, RequestWithUser } from '../ts/interfaces';
+import { ILookerFeatUserInterface, ISelectQueryResult } from '../ts/interfaces';
 
 import { config } from 'dotenv';
+import axios from 'axios';
 config();
-
+const auth0Domain = process.env.AUTH0_DOMAIN as string;
+const auth0Audience = process.env.AUTH0_AUDIENCE as string;
 const fifteen_minutes = 60 * 60;
 const dashMap: { [key: string]: number } = {
   appointments: 83,
@@ -25,16 +27,16 @@ const dashMap: { [key: string]: number } = {
 function forceUnicodeEncoding(string: string) {
   return decodeURIComponent(encodeURIComponent(string));
 }
-export const getDashboardURLController = async (req: RequestWithUser, res: Response) => {
+export const getDashboardURLController = async (req: Request, res: Response) => {
   try {
     const database = LookerPostgresConnection.getInstance();
     const { dashboard } = req.query;
     // GET GO PLATFORM AUTHENTICATED USER
-    if(!req.user || !req.user.email) {
+    if(!req.user || !req.user.jwt) {
         return '';
     }
-    const user_email = 'pablo.zarate@cience.com';
-
+    const response = await axios.get(`https://${auth0Domain}/userinfo`, {headers: { Authorization: `Bearer ${req.user.jwt}` }});
+    const user_email = response.data.email;
     // GET USER FROM DIRECTUS
     const userresult = (await database.executeQuery(
       `SELECT * FROM directus_users WHERE email = '${user_email}' LIMIT 1;`
