@@ -12,6 +12,20 @@ custom:
 functions:
   app:
     handler: dist/app.handler
+    environment:
+      APP_URL: https://dev.gocience.com
+      GO_API_KEY: 9ee70af624c3428c39ce2013635cc6dd1dc67d4acdc68fafd9bf488caad9319a
+      AUTH0_DOMAIN: dev-cience-auth.us.auth0.com
+      AUTH0_AUDIENCE: https://dev-cience-jwt/
+      LOOKER_SSO_SECRET: 04f8fa18f91333bcd6ba7b7d14ede75012a17bfbdb53a178d1384eaec3cb66ad
+      LOOKER_DB_CLIENT: "pg"
+      LOOKER_DB_HOST: "cience-client-data-scraper.cvenqxb1sel2.us-east-1.rds.amazonaws.com"
+      LOOKER_DB_PORT: "5432"
+      LOOKER_DB_DATABASE: "client-record-manager_test_5"
+      LOOKER_DB_USER: "postgres"
+      LOOKER_DB_PASSWORD: "q8qj9tn7Um24h93X"
+      LOOKER_DB_SSL: "false"
+      LOOKER_DB_TIMEZONE: "+00:00"
     events:
       - http: ANY /
       - http: ANY /{proxy+}
