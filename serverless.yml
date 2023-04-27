@@ -14,7 +14,7 @@ functions:
     handler: dist/app.handler
     environment:
       APP_URL: https://dev.gocience.com
-      GO_API_KEY: 9ee70af624c3428c39ce2013635cc6dd1dc67d4acdc68fafd9bf488caad9319a
+      GO_CAP_API_KEY: 7bca5ee231e7fd20a44cacaa72d9cdafa34ccfb04bbe09a9c91e19b6fe198713
       AUTH0_DOMAIN: dev-cience-auth.us.auth0.com
       AUTH0_AUDIENCE: https://dev-cience-jwt/
       LOOKER_SSO_SECRET: 04f8fa18f91333bcd6ba7b7d14ede75012a17bfbdb53a178d1384eaec3cb66ad

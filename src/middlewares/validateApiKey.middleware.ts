@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
-const apiKeys = process.env.GO_API_KEY;
+const apiKeys = process.env.GO_CAP_API_KEY;
 export const checkXApiKey = (req: Request, res: Response, next: NextFunction) => {
   const apiKey = req.headers['x-api-key'];
   const customer_id = req.headers['customer-id'];
