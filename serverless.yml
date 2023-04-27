@@ -1,5 +1,7 @@
 service: 'go-platform-cap-api'
 provider:
+  httpApi:
+    cors: true
   name: aws
   runtime: nodejs18.x
   deploymentBucket:
