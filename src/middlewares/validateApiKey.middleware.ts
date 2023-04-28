@@ -7,7 +7,7 @@ export const checkXApiKey = (req: Request, res: Response, next: NextFunction) =>
   const apiKeys = process.env.GO_CAP_API_KEY;
   const customer_id = req.headers['customer-id'];
   if (apiKey !== apiKeys || !apiKey || !apiKeys) {
-    let code = '401UAI-V-'
+    let code = '401UAI-V2-'
     if(apiKey !== apiKeys) code += 'DF'
     if(!apiKey) code += 'NAK'
     if(!apiKeys) code += 'NENVAK'
