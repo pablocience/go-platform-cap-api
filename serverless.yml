@@ -1,11 +1,27 @@
-service: 'go-platform-cap-api'
+service: "go-platform-cap-api"
 provider:
   httpApi:
-    cors: true
+    cors:
+      allowedOrigins:
+        - '*'
+      allowedHeaders:
+        - Content-Type
+        - X-Amz-Date
+        - Authorization
+        - X-Api-Key
+        - X-Amz-Security-Token
+        - x-looker-key
+        - customer-id
+        - x-api-key
+      allowedMethods:
+        - GET
+        - OPTIONS
+        - POST
+      allowCredentials: true
   name: aws
   runtime: nodejs18.x
   deploymentBucket:
-    name: 'go-platform-cap-api-dev'
+    name: "go-platform-cap-api-dev"
 plugins:
   - serverless-offline
 custom:

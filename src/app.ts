@@ -1,12 +1,11 @@
 import express, { Request } from 'express';
 import serverless from 'serverless-http';
-
+import cors from 'cors'
 import routes from './routes';
 import { attachUserData, checkJwt } from './middlewares/CheckJWTAuth0';
 import { checkXApiKey } from './middlewares/validateApiKey.middleware';
 
 const app = express();
-
 app.use(express.json());
 app.use(checkXApiKey);
 app.use((req, res, next) => {
