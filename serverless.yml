@@ -12,7 +12,7 @@ custom:
   serverless-offline:
     httpPort: 8080
   dotenv:
-    path: ./.env.dev
+    path: ./.env.${self:provider.stage}
 functions:
   app:
     handler: dist/app.handler
