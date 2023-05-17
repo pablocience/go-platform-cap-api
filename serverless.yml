@@ -2,7 +2,7 @@ service: "go-platform-nodejs-api"
 provider:
   name: aws
   runtime: nodejs18.x
-  stage: ${opt:stage, 'dev'}
+  stage: ${opt:stage, 'prod'}
   deploymentBucket:
     name: "go-platform-nodejs-api-${self:provider.stage}"
 plugins:

@@ -36,7 +36,7 @@ export const attachUserData = async (req: Request, next: NextFunction) => {
       req.user = { ...decodedToken, id: decodedToken.sub };
       req.user.jwt = accessToken;
     } catch (error) {
-      console.error('Error al obtener datos del usuario:', error);
+      console.error('Error getting user data:', error);
     }
   }
 

@@ -13,11 +13,16 @@ const fifteen_minutes = 60 * 60;
 const dashMap: { [key: string]: number } = {
   appointments: 83,
   engagements: 84,
+  // IN USE (GO Outbound):
   emails: 79,
+  // IN USE (GO Outbound):
   calls: 80,
   linkedin: 81,
   web: 82,
+  // IN USE (GO Outbound):
   'client-overview': 434,
+  // IN USE (GO Digital):
+  'go-digital-overview': 579,
   'multi-account': 109,
   signal: 187,
   'actions-for-appts': 511,
