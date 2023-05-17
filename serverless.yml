@@ -1,31 +1,23 @@
-service: "go-platform-cap-api"
+service: "go-platform-nodejs-api"
 provider:
   name: aws
   runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
   deploymentBucket:
-    name: "go-platform-cap-api-dev"
+    name: "go-platform-nodejs-api-${self:provider.stage}"
 plugins:
+  - serverless-dotenv-plugin
   - serverless-offline
 custom:
   serverless-offline:
     httpPort: 8080
+  dotenv:
+    path: ./.env.dev
 functions:
   app:
     handler: dist/app.handler
     environment:
-      APP_URL: https://dev.gocience.com
-      GO_CAP_API_KEY: 7bca5ee231e7fd20a44cacaa72d9cdafa34ccfb04bbe09a9c91e19b6fe198713
-      AUTH0_DOMAIN: dev-cience-auth.us.auth0.com
-      AUTH0_AUDIENCE: https://dev-cience-jwt/
-      LOOKER_SSO_SECRET: 04f8fa18f91333bcd6ba7b7d14ede75012a17bfbdb53a178d1384eaec3cb66ad
-      LOOKER_DB_CLIENT: "pg"
-      LOOKER_DB_HOST: "cience-client-data-scraper.cvenqxb1sel2.us-east-1.rds.amazonaws.com"
-      LOOKER_DB_PORT: "5432"
-      LOOKER_DB_DATABASE: "client-record-manager_test_5"
-      LOOKER_DB_USER: "postgres"
-      LOOKER_DB_PASSWORD: "q8qj9tn7Um24h93X"
-      LOOKER_DB_SSL: "false"
-      LOOKER_DB_TIMEZONE: "+00:00"
+      NODE_ENV: ${self:provider.stage}
     events:
       - http: ANY /
       - http: ANY /{proxy+}

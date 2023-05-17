@@ -9,7 +9,7 @@ router.get('/', async (req: Request, res: Response) => {
     res.status(200).json({url});
   } catch (error) {
     console.error('An error ocurred:', error);
-    res.status(500).json(error);
+    res.status(400).json({error, message: 'An error ocurred'});
   }
 });
 

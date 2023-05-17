@@ -31,6 +31,7 @@ export const attachUserData = async (req: Request, next: NextFunction) => {
       // });
       // req.user = response.data;
       const decodedToken = jwt.decode(accessToken) as Request['user'];
+      // console.log('decodedToken', decodedToken);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       req.user = { ...decodedToken, id: decodedToken.sub };
       req.user.jwt = accessToken;

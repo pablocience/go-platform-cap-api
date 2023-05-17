@@ -4,7 +4,8 @@ import cors from 'cors'
 import routes from './routes';
 import { attachUserData, checkJwt } from './middlewares/CheckJWTAuth0';
 import { checkXApiKey } from './middlewares/validateApiKey.middleware';
-
+import dotenv from 'dotenv';
+dotenv.config({ path: `./.env.${process.env.NODE_ENV}` });
 const corsOptions = {
   origin: '*',
   methods: 'GET,OPTIONS,POST',
@@ -29,21 +30,27 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(checkXApiKey);
 app.use((req, res, next) => {
-  checkJwt(req, res, (err) => {
-    if (err) {
-      return next(err);
-    }
-    attachUserData(req as unknown as Request, next);
-  });
+  try {
+    checkJwt(req, res, (err) => {
+      if (err) {
+        console.log('Error:', err);
+        return next(err);
+      }
+      attachUserData(req as unknown as Request, next);
+    });
+  } catch (error) {
+    console.log('Error:', error);
+    throw new Error('Internal server error - JWT error: ');
+  }
 });
 app.use('/', routes);
 
 app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-  res.status(404).send();
+  res.status(404).json({ error: 'Not found' });
 });
 
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  res.status(err.status || 500).send();
+  res.status(err.status || 500).json({ error: err.message });
 });
 
 export const handler = serverless(app);

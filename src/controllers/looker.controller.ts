@@ -33,7 +33,7 @@ export const getDashboardURLController = async (req: Request, res: Response) => 
     const { dashboard } = req.query;
     // GET GO PLATFORM AUTHENTICATED USER
     if(!req.user || !req.user.jwt) {
-        return '';
+        return null;
     }
     const response = await axios.get(`https://${auth0Domain}/userinfo`, {headers: { Authorization: `Bearer ${req.user.jwt}` }});
     const user_email = response.data.email;
@@ -41,44 +41,55 @@ export const getDashboardURLController = async (req: Request, res: Response) => 
     const userresult = (await database.executeQuery(
       `SELECT * FROM directus_users WHERE email = '${user_email}' LIMIT 1;`
     )) as unknown as ISelectQueryResult;
+    // define default value for
     const user = userresult.rows[0] as ILookerFeatUserInterface;
+    let clientsResult = [] as unknown as ISelectQueryResult;
+    let isAdmin = false;
+    if(!user) {
+      if (!req.params.clientId) {
+        clientsResult = await database.executeQuery(
+          `SELECT  salesloft_email_address, id, client_name FROM clients where '${user_email}' = ANY(string_to_array(client_external_accessor_emails, ','))`
+      ) as unknown as ISelectQueryResult;
+      } else {
+        clientsResult = await database.executeQuery(
+          `SELECT  salesloft_email_address, id, client_name FROM clients where id = ${req.params.clientId} AND '${user_email}' = ANY(string_to_array(client_external_accessor_emails, ','))`
+        ) as unknown as ISelectQueryResult;
+      }
+    } else {
+      // GET USER ROLE
+      const roleResult = (await database.executeQuery(
+        `SELECT * FROM directus_roles WHERE id = '${user.role}' LIMIT 1;`
+      )) as unknown as ISelectQueryResult;
+      const role = roleResult.rows[0] as { name: string };
 
-    // GET USER ROLE
-    const roleResult = (await database.executeQuery(
-      `SELECT * FROM directus_roles WHERE id = '${user.role}' LIMIT 1;`
-    )) as unknown as ISelectQueryResult;
-    const role = roleResult.rows[0] as { name: string };
-
-    // CLIENTS TO SHOW
-    const clientsResult = (await database.executeQuery(
-      `SELECT clients.id, clients.salesloft_email_address 
-      FROM clients INNER JOIN clients_directus_users ON clients.salesloft_email_address IS NOT NULL 
-      AND clients.id = clients_directus_users.clients_id AND clients_directus_users.directus_users_id = '${user.id}' 
-      WHERE clients.active = true;`
-    )) as unknown as ISelectQueryResult;
-
-    const clients = clientsResult.rows as Array<{ salesloft_email_address: string }>;
-    if (!user) {
-      throw new Error('User not found');
+      // CLIENTS TO SHOW
+      clientsResult = (await database.executeQuery(
+        `SELECT clients.id, clients.salesloft_email_address 
+        FROM clients INNER JOIN clients_directus_users ON clients.salesloft_email_address IS NOT NULL 
+        AND clients.id = clients_directus_users.clients_id AND clients_directus_users.directus_users_id = '${user.id}' 
+        WHERE clients.active = true;`
+      )) as unknown as ISelectQueryResult;
+      isAdmin = [
+        'Admin',
+        'SuperAdmin',
+        'Manager',
+        'SDR QA',
+        'Web Team Member',
+        'Campaign Strategist',
+        'QA TL',
+        'SDR Manager',
+      ].includes(role.name);
     }
+    const clients = clientsResult.rows as Array<{ salesloft_email_address: string }>;
     if (!clients) {
       throw new Error('Clients not found');
     }
 
-    const isAdmin = [
-      'Admin',
-      'SuperAdmin',
-      'Manager',
-      'SDR QA',
-      'Web Team Member',
-      'Campaign Strategist',
-      'QA TL',
-      'SDR Manager',
-    ].includes(role.name);
+
 
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     const url = makeUrl(
-      user,
+      user ?? req.user,
       isAdmin,
       dashboard as string,
       clients.map((c) => c.salesloft_email_address),
@@ -110,7 +121,7 @@ const makeUrl = (
   embed_domain: string
 ) => {
   const host = 'looker.cienceapps.com';
-  console.log('wanted=dashboard: ', wantedDash, dashMap[wantedDash]);
+  console.log('wanted=dashboard: ', wantedDash, dashMap[wantedDash], user.email);
   // const embed_prefix = '/embed/dashboards-next/'
   // const embed_prefix_safe = '%2embed%2Fdashboards-next%2F'
 
