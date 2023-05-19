@@ -51,16 +51,20 @@ export const getDashboardURLController = async (req: Request, res: Response) => 
     let clientsResult = [] as unknown as ISelectQueryResult;
     let isAdmin = false;
     if(!user) {
+      // console.log('user not found, looking for external accesor!');
       if (!req.params.clientId) {
+        // console.log('no client id, getting all clients');
         clientsResult = await database.executeQuery(
           `SELECT  salesloft_email_address, id, client_name FROM clients where '${user_email}' = ANY(string_to_array(client_external_accessor_emails, ','))`
       ) as unknown as ISelectQueryResult;
+      // console.log('clientsResult: ', clientsResult.rows);
       } else {
         clientsResult = await database.executeQuery(
           `SELECT  salesloft_email_address, id, client_name FROM clients where id = ${req.params.clientId} AND '${user_email}' = ANY(string_to_array(client_external_accessor_emails, ','))`
         ) as unknown as ISelectQueryResult;
       }
     } else {
+      // console.log('user found, looking for internal accesor!');
       // GET USER ROLE
       const roleResult = (await database.executeQuery(
         `SELECT * FROM directus_roles WHERE id = '${user.role}' LIMIT 1;`
@@ -84,7 +88,9 @@ export const getDashboardURLController = async (req: Request, res: Response) => 
         'QA TL',
         'SDR Manager',
       ].includes(role.name);
+      // console.log('user found__clientsResult: ', clientsResult.rows);
     }
+    // console.log('clientsResult: ', clientsResult.rows);
     const clients = clientsResult.rows as Array<{ salesloft_email_address: string }>;
     if (!clients) {
       throw new Error('Clients not found');
@@ -94,11 +100,11 @@ export const getDashboardURLController = async (req: Request, res: Response) => 
 
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     const url = makeUrl(
-      user ?? req.user,
+      user ?? {...req.user, email: user_email},
       isAdmin,
       dashboard as string,
       clients.map((c) => c.salesloft_email_address),
-      'http://localhost:3000'
+      process.env.APP_URL as string
     );
 
     return url;
